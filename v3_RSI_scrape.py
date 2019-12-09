@@ -9,7 +9,7 @@ http = urllib3.PoolManager()
 
 csv_file = open('12719_SC_Ships_Available.csv', 'w', newline='', encoding='utf-8')
 csv_writer = csv.writer(csv_file, )
-csv_writer.writerow(['Ship', 'Ship Price', 'Ship Image', 'Link to Ship'])
+csv_writer.writerow(['Ship', 'Ship Price','Ship Image', 'Link to Ship'])
 
 shipURLs = requests.get('https://robertsspaceindustries.com/pledge/ships').text
 
@@ -53,11 +53,15 @@ for item in generator:
         shipLName = shipLName.strip()
         data.append(f"""\nShip: {shipFName} {shipLName} \nShip Price: {final_price}""")
         for image in soup.find_all('span', class_='thumbnails clearfix'):
-            findImageURLString = image.findChildren()[2]['href']
-            buildImageURL = f'''=IMAGE("https://robertsspaceindustries.com{findImageURLString}",1)'''
+            findImageURLString = image.findChildren()[4]['href'] 
+            buildImageURL = f'https://robertsspaceindustries.com{findImageURLString}'  
+            if findImageURLString.startswith('/'):
+                sheetLink = f'''=IMAGE('https://robertsspaceindustries.com{findImageURLString}')'''
+            else: 
+                sheetLink = f'''=IMAGE('{findImageURLString}')'''
             data.append(f"""Ship URL: {url} \nImage: {buildImageURL}""")
             # print('\n'.join(data))
-        csv_writer.writerow([shipFName + shipLName ,final_price, buildImageURL,url])
+        csv_writer.writerow([shipFName + shipLName ,final_price, sheetLink,url])
 csv_file.close()
 
 
@@ -65,14 +69,11 @@ csv_file.close()
 # source = requests.get('https://robertsspaceindustries.com/pledge/ships/anvil-hornet/F7C-Hornet').text
 # soup = BeautifulSoup(source, 'lxml')
 
+# ----------> Find a better way to grab description
 # description = soup.find('div', class_='excerpt')
 # data = []
 # print(f'{description.text.strip()}')
 
 # ----------> Format in Google Sheets for images if I wanted to intergrate pricture of ships???
+# ----------> Problem with wrapping dynamic variable with double quotes. Looking for solution...
 # =IMAGE(“https://robertsspaceindustries.com/media/3e0oc9s85451kr/store_slideshow_large/F7c_hornet_front-Right_visual.jpg", 1, 50, 25)
-
-# ----------> Find Image for ships
-# image = soup.find('span', class_='thumbnails clearfix')
-# findATag = image.findChildren()[2]['href']
-# print(findATag)
