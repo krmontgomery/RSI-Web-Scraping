@@ -7,7 +7,7 @@ import csv
 
 http = urllib3.PoolManager()
 
-csv_file = open('12719_SC_Ships_Available.csv', 'w', newline='', encoding='utf-8')
+csv_file = open('122819_SC_Ships_Available.csv', 'w', newline='', encoding='utf-8')
 csv_writer = csv.writer(csv_file, )
 csv_writer.writerow(['Ship', 'Ship Price','Ship Image', 'Link to Ship'])
 
